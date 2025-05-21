@@ -22,7 +22,7 @@ func main() {
 		log.Fatalln("new client error")
 	}
 
-	if err := client.Register("MIMI2", "AEGIS"); err != nil {
+	if err := client.Register("MIMI3", "AEGIS"); err != nil {
 		log.Fatalln(err)
 	}
 
