@@ -1,0 +1,186 @@
+-- +goose Up
+CREATE TABLE registrations(
+  id SERIAL NOT NULL PRIMARY KEY,
+  name TEXT NOT NULL,
+  faction_symbol TEXT NOT NULL,
+  role TEXT NOT NULL
+);
+
+CREATE TABLE destinations(
+  id SERIAL NOT NULL PRIMARY KEY,
+  symbol TEXT NOT NULL,
+  type TEXT NOT NULL,
+  system_symbol TEXT NOT NULL,
+  x INTEGER NOT NULL,
+  y INTEGER NOT NULL
+);
+
+CREATE TABLE origins(
+  id SERIAL NOT NULL PRIMARY KEY,
+  symbol TEXT NOT NULL,
+  type TEXT NOT NULL,
+  system_symbol TEXT NOT NULL,
+  x INTEGER NOT NULL,
+  y INTEGER NOT NULL
+);
+
+CREATE TABLE routes(
+  id SERIAL NOT NULL PRIMARY KEY,
+  destination_id INTEGER REFERENCES destinations(id) ON DELETE CASCADE NOT NULL,
+  origin_id INTEGER REFERENCES origins(id) ON DELETE CASCADE NOT NULL,
+  departure_time TIMESTAMPTZ NOT NULL,
+  arrival TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE navs(
+  id SERIAL NOT NULL PRIMARY KEY,
+  system_symbol TEXT NOT NULL,
+  waypoint_symbol TEXT NOT NULL,
+  route_id INTEGER REFERENCES routes(id) ON DELETE CASCADE NOT NULL,
+  status TEXT NOT NULL,
+  flight_mode TEXT NOT NULL
+);
+
+CREATE TABLE crews(
+  id SERIAL NOT NULL PRIMARY KEY,
+  current INTEGER NOT NULL,
+  required INTEGER NOT NULL,
+  capacity INTEGER NOT NULL,
+  rotation TEXT NOT NULL DEFAULT 'strict',
+  morale INTEGER NOT NULL,
+  wages INTEGER NOT NULL
+);
+
+CREATE TABLE requirements(
+  id SERIAL NOT NULL PRIMARY KEY,
+  power INTEGER NOT NULL,
+  crew INTEGER NOT NULL,
+  slots INTEGER NOT NULL
+);
+
+CREATE TABLE frames(
+  id SERIAL NOT NULL PRIMARY KEY,
+  symbol TEXT NOT NULL,
+  name TEXT NOT NULL,
+  condition DOUBLE PRECISION NOT NULL,
+  integrity DOUBLE PRECISION NOT NULL,
+  description TEXT NOT NULL,
+  module_slots INTEGER NOT NULL,
+  mounting_points INTEGER NOT NULL,
+  fuel_capacity INTEGER NOT NULL,
+  requirement_id INTEGER REFERENCES requirements(id) ON DELETE CASCADE NOT NULL,
+  quality INTEGER NOT NULL
+);
+
+CREATE TABLE reactors(
+  id SERIAL NOT NULL PRIMARY KEY,
+  symbol TEXT NOT NULL,
+  name TEXT NOT NULL,
+  condition DOUBLE PRECISION NOT NULL,
+  integrity DOUBLE PRECISION NOT NULL,
+  description TEXT NOT NULL,
+  power_output INTEGER NOT NULL,
+  requirement_id INTEGER REFERENCES requirements(id) ON DELETE CASCADE NOT NULL,
+  quality INTEGER NOT NULL
+);
+
+CREATE TABLE engines(
+  id SERIAL NOT NULL PRIMARY KEY,
+  symbol TEXT NOT NULL,
+  name TEXT NOT NULL,
+  condition DOUBLE PRECISION NOT NULL,
+  integrity DOUBLE PRECISION NOT NULL,
+  description TEXT NOT NULL,
+  speed INTEGER NOT NULL,
+  requirement_id INTEGER REFERENCES requirements(id) ON DELETE CASCADE NOT NULL,
+  quality INTEGER NOT NULL
+);
+
+CREATE TABLE modules(
+  id SERIAL NOT NULL PRIMARY KEY,
+  symbol TEXT NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  capacity INTEGER NOT NULL,
+  range INTEGER NOT NULL,
+  requirement_id INTEGER REFERENCES requirements(id) ON DELETE CASCADE NOT NULL
+);
+
+CREATE TABLE mounts(
+  id SERIAL NOT NULL PRIMARY KEY,
+  symbol TEXT NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  strength INTEGER NOT NULL,
+  deposits TEXT[] NOT NULL,
+  requirement_id INTEGER REFERENCES requirements(id) ON DELETE CASCADE NOT NULL
+);
+
+CREATE TABLE inventories(
+  id SERIAL NOT NULL PRIMARY KEY,
+  symbol TEXT NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  units INTEGER NOT NULL
+);
+
+CREATE TABLE cargos(
+  id SERIAL NOT NULL PRIMARY KEY,
+  capacity INTEGER NOT NULL,
+  units INTEGER NOT NULL,
+  inventory_id INTEGER REFERENCES inventories(id) ON DELETE CASCADE NOT NULL
+);
+
+CREATE TABLE consumed(
+       id SERIAL NOT NULL PRIMARY KEY,
+       amount INTEGER NOT NULL,
+       timestmp TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE fuels(
+  id SERIAL NOT NULL PRIMARY KEY,
+  current INTEGER NOT NULL,
+  capacity INTEGER NOT NULL,
+  consumed_id INTEGER REFERENCES consumed(id) ON DELETE CASCADE NOT NULL
+);
+
+CREATE TABLE cooldowns(
+  id SERIAL NOT NULL PRIMARY KEY,
+  ship_symbol TEXT NOT NULL,
+  total_seconds INTEGER NOT NULL,
+  remaining_seconds INTEGER NOT NULL,
+  expiration TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE ships(
+  id SERIAL NOT NULL PRIMARY KEY,
+  symbol TEXT NOT NULL,
+  registration_id INTEGER REFERENCES registrations(id) ON DELETE CASCADE NOT NULL,
+  nav_id INTEGER REFERENCES navs(id) ON DELETE CASCADE NOT NULL,
+  crew_id INTEGER REFERENCES crews(id) ON DELETE CASCADE NOT NULL,
+  frame_id INTEGER REFERENCES frames(id) ON DELETE CASCADE NOT NULL,
+  reactor_id INTEGER REFERENCES reactors(id) ON DELETE CASCADE NOT NULL,
+  engines_id INTEGER REFERENCES engines(id) ON DELETE CASCADE NOT NULL,
+  module_id INTEGER REFERENCES modules(id) ON DELETE CASCADE NOT NULL,
+  mount_id INTEGER REFERENCES mounts(id) ON DELETE CASCADE NOT NULL,
+  cargo_id INTEGER REFERENCES cargos(id) ON DELETE CASCADE NOT NULL,
+  fuel_id INTEGER REFERENCES fuels(id) ON DELETE CASCADE NOT NULL,
+  cooldown_id INTEGER REFERENCES cooldowns(id) ON DELETE CASCADE NOT NULL
+);
+--
+
+-- +goose Down
+DROP TABLE ships;
+DROP TABLE mounts;
+DROP TABLE modules;
+DROP TABLE engines;
+DROP TABLE reactors;
+DROP TABLE frames;
+DROP TABLE requirements;
+DROP TABLE crews;
+DROP TABLE navs;
+DROP TABLE routes;
+DROP TABLE origins;
+DROP TABLE destinations;
+DROP TABLE registrations;
+--
