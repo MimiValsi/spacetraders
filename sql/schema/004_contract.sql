@@ -6,7 +6,8 @@ CREATE TABLE contracts(
   type TEXT NOT NULL,
   accepted BOOL NOT NULL DEFAULT false,
   fulfilled BOOL NOT NULL DEFAULT false,
-  deadline_to_accept TIMESTAMPTZ NOT NULL
+  deadline_to_accept TIMESTAMPTZ NOT NULL,
+  agent_id INTEGER REFERENCES agents(id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE terms(
@@ -19,8 +20,7 @@ CREATE TABLE payments(
   id SERIAL NOT NULL PRIMARY KEY,
   on_accepted INTEGER NOT NULL,
   on_fulfilled INTEGER NOT NULL,
-  term_id INTEGER REFERENCES terms(id) ON DELETE CASCADE NOT NULL,
-  contract_id INTEGER REFERENCES contracts(cid) ON DELETE CASCADE NOT NULL
+  term_id INTEGER REFERENCES terms(id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE delivers(
@@ -29,8 +29,7 @@ CREATE TABLE delivers(
   destination_symbol TEXT NOT NULL,
   units_required INTEGER NOT NULL,
   units_fulfilled INTEGER NOT NULL,
-  term_id INTEGER REFERENCES terms(id) ON DELETE CASCADE NOT NULL,
-  contract_id INTEGER REFERENCES contracts(cid) ON DELETE CASCADE NOT NULL
+  term_id INTEGER REFERENCES terms(id) ON DELETE CASCADE NOT NULL
 );
 --
 
