@@ -1,6 +1,7 @@
 -- +goose Up
 CREATE TABLE agents (
-  account_id TEXT NOT NULL PRIMARY KEY,
+  id SERIAL NOT NULL PRIMARY KEY,
+  account_id TEXT NOT NULL,
   token TEXT NOT NULL,
   symbol TEXT NOT NULL,
   headquarters TEXT NOT NULL,
