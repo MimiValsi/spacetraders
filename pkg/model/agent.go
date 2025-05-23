@@ -22,5 +22,5 @@ type Agent struct {
 	Headquarters    string `json:"headquarters"`
 	Credits         int64  `json:"credits"`
 	StartingFaction string `json:"startingFaction"`
-	ShipCount       int64  `json:"shipCount"`
+	ShipCount       int32  `json:"shipCount"`
 }

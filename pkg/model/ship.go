@@ -4,7 +4,7 @@ import "time"
 
 type ShipData struct {
 	Data struct {
-		Ship
+		Ship Ship
 	} `json:"data"`
 }
 
@@ -48,79 +48,79 @@ type Destination struct {
 	Symbol       string `json:"symbol"`
 	Type         string `json:"type"`
 	SystemSymbol string `json:"systemSymbol"`
-	X            int    `json:"x"`
-	Y            int    `json:"y"`
+	X            int32  `json:"x"`
+	Y            int32  `json:"y"`
 }
 
 type Origin struct {
 	Symbol       string `json:"symbol"`
 	Type         string `json:"type"`
 	SystemSymbol string `json:"systemSymbol"`
-	X            int    `json:"x"`
-	Y            int    `json:"y"`
+	X            int32  `json:"x"`
+	Y            int32  `json:"y"`
 }
 
 type Crew struct {
-	Current  int    `json:"current,"`
-	Required int    `json:"required"`
-	Capacity int    `json:"capacity"`
+	Current  int32  `json:"current,"`
+	Required int32  `json:"required"`
+	Capacity int32  `json:"capacity"`
 	Rotation string `json:"rotation"`
-	Morale   int    `json:"morale"`
-	Wages    int    `json:"wages"`
+	Morale   int32  `json:"morale"`
+	Wages    int32  `json:"wages"`
 }
 
 type Frame struct {
 	Symbol         string        `json:"symbol"`
 	Name           string        `json:"name"`
 	Description    string        `json:"description"`
-	Condition      int           `json:"condition"`
-	Integrity      int           `json:"integrity"`
-	ModuleSlots    int           `json:"moduleSlots"`
-	MountingPoints int           `json:"mountingPoints"`
-	FuelCapacity   int           `json:"fuelCapacity"`
+	Condition      float32       `json:"condition"`
+	Integrity      float32       `json:"integrity"`
+	ModuleSlots    int32         `json:"moduleSlots"`
+	MountingPoints int32         `json:"mountingPoints"`
+	FuelCapacity   int32         `json:"fuelCapacity"`
 	Requirements   *Requirements `json:"requirements"`
-	Quality        int           `json:"quality"`
+	Quality        int32         `json:"quality"`
 }
 
 type Requirements struct {
-	Power int `json:"power"`
-	Crew  int `json:"crew"`
-	Slots int `json:"slots"`
+	Power int32 `json:"power"`
+	Crew  int32 `json:"crew"`
+	Slots int32 `json:"slots"`
 }
 
 type Reactor struct {
 	Symbol       string        `json:"symbol"`
 	Name         string        `json:"name"`
 	Description  string        `json:"description"`
-	Condition    int           `json:"condition"`
-	Integrity    int           `json:"integrity"`
-	PowerOutput  int           `json:"powerOutput"`
+	Condition    float32       `json:"condition"`
+	Integrity    float32       `json:"integrity"`
+	PowerOutput  int32         `json:"powerOutput"`
 	Requirements *Requirements `json:"requirements"`
-	Quality      int           `json:"quality"`
+	Quality      int32         `json:"quality"`
 }
 
 type Engine struct {
 	Symbol       string        `json:"symbol"`
 	Name         string        `json:"name"`
 	Description  string        `json:"description"`
-	Condition    int           `json:"condition"`
-	Integrity    int           `json:"integrity"`
-	Speed        int           `json:"speed"`
+	Condition    float32       `json:"condition"`
+	Integrity    float32       `json:"integrity"`
+	Speed        int32         `json:"speed"`
 	Requirements *Requirements `json:"requirements"`
-	Quality      int           `json:"quality"`
+	Quality      int32         `json:"quality"`
 }
 
 type Cooldown struct {
 	ShipSymbol       string    `json:"shipSymbol"`
-	TotalSeconds     int       `json:"total_seconds"`
-	RemainingSeconds int       `json:"remainingSeconds"`
+	TotalSeconds     int32     `json:"total_seconds"`
+	RemainingSeconds int32     `json:"remainingSeconds"`
 	Expiration       time.Time `json:"expiration"`
 }
 
 type Modules struct {
 	Symbol       string        `json:"symbol"`
-	Capacity     int           `json:"capacity"`
-	Range        int           `json:"range"`
+	Capacity     int32         `json:"capacity"`
+	Range        int32         `json:"range"`
 	Name         string        `json:"name"`
 	Description  string        `json:"description"`
 	Requirements *Requirements `json:"requirements"`
@@ -130,14 +130,14 @@ type Mounts struct {
 	Symbol       string        `json:"symbol"`
 	Name         string        `json:"name"`
 	Description  string        `json:"description"`
-	Strength     int           `json:"strength"`
-	Deposits     []string      `json:"deposits"`
+	Strength     int32         `json:"strength,omitempty"`
+	Deposits     []string      `json:"deposits,omitempty"`
 	Requirements *Requirements `json:"requirements"`
 }
 
 type Cargo struct {
-	Capacity  int         `json:"capacity"`
-	Units     int         `json:"units"`
+	Capacity  int32       `json:"capacity"`
+	Units     int32       `json:"units"`
 	Inventory []Inventory `json:"inventory"`
 }
 
@@ -145,16 +145,16 @@ type Inventory struct {
 	Symbol      string `json:"symbol"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	Units       int    `json:"units"`
+	Units       int32  `json:"units"`
 }
 
 type Fuel struct {
-	Current  int       `json:"current"`
-	Capacity int       `json:"capacity"`
+	Current  int32     `json:"current"`
+	Capacity int32     `json:"capacity"`
 	Consumed *Consumed `json:"consumed"`
 }
 
 type Consumed struct {
-	Amount    int       `json:"amount"`
+	Amount    int32     `json:"amount"`
 	Timestamp time.Time `json:"timestamp"`
 }

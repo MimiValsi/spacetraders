@@ -18,20 +18,20 @@ type Contract struct {
 	DeadlineToAccept time.Time `json:"deadlineToAccept"`
 }
 
+type Terms struct {
+	Deadline time.Time `json:"deadline"`
+	Payment  *Payment  `json:"payment"`
+	Deliver  []Deliver `json:"deliver"`
+}
+
 type Deliver struct {
 	TradeSymbol       string `json:"tradeSymbol"`
 	DestinationSymbol string `json:"destinationSymbol"`
-	UnitsRequired     int    `json:"unitsRequired"`
-	UnitsFulfilled    int    `json:"unitsFulfilled"`
+	UnitsRequired     int32  `json:"unitsRequired"`
+	UnitsFulfilled    int32  `json:"unitsFulfilled"`
 }
 
 type Payment struct {
 	OnAccepted  int32 `json:"onAccepted"`
 	OnFulfilled int32 `json:"onFulilled"`
-}
-
-type Terms struct {
-	Deadline time.Time `json:"deadline"`
-	Payment  *Payment  `json:"payment"`
-	Deliver  []Deliver `json:"deliver"`
 }
