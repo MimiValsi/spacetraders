@@ -4,7 +4,7 @@ import "time"
 
 type ContractData struct {
 	Data struct {
-		Contract
+		Contract Contract
 	} `json:"data"`
 }
 

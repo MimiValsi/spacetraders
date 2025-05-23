@@ -2,7 +2,7 @@ package model
 
 type FactionData struct {
 	Data struct {
-		Faction
+		Faction Faction
 	} `json:"data"`
 }
 

@@ -12,7 +12,7 @@ type AgentRegister struct {
 
 type AgentData struct {
 	Data struct {
-		Agent
+		Agent Agent
 	} `json:"data"`
 }
 
