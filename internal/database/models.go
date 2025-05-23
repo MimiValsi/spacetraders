@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+type Account struct {
+	ID        string
+	Email     string
+	CreatedAt time.Time
+}
+
 type Agent struct {
 	ID              int32
 	AccountID       string
