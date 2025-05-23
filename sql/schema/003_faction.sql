@@ -5,7 +5,8 @@ CREATE TABLE factions(
   name TEXT NOT NULL,
   description TEXT NOT NULL,
   headquarters TEXT NOT NULL,
-  is_recruiting BOOL NOT NULL
+  is_recruiting BOOL NOT NULL,
+  agent_id INTEGER REFERENCES agents(id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE traits(
