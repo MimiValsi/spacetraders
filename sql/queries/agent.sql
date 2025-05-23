@@ -1,4 +1,4 @@
--- name: registerAgent :one
+-- name: RegisterAgent :one
 INSERT INTO agents (
   account_id,
   token,

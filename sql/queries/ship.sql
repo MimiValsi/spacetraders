@@ -1,10 +1,10 @@
--- name: registerShip :one
+-- name: RegisterShip :one
 INSERT INTO ships (symbol, agent_id)
 VALUES ($1, $2)
 RETURNING id;
 --
 
--- name: registerRegistration :one
+-- name: RegisterRegistration :exec
 INSERT INTO registrations (
   name,
   faction_symbol,
@@ -14,7 +14,7 @@ INSERT INTO registrations (
 VALUES ($1, $2, $3, $4);
 --
 
--- name: registerNav :one
+-- name: RegisterNav :one
 INSERT INTO navs (
   system_symbol,
   waypoint_symbol,
@@ -22,17 +22,17 @@ INSERT INTO navs (
   flight_mode,
   ship_id
 )
-VALUES ($1, $2, $3, $4, $5);
+VALUES ($1, $2, $3, $4, $5)
 RETURNING id;
 --
 
--- name: registerRoute :one
+-- name: RegisterRoute :one
 INSERT INTO routes (departure_time, arrival, nav_id)
 VALUES ($1, $2, $3)
 RETURNING id;
 --
 
--- name: registerDestination :one
+-- name: RegisterDestination :exec
 INSERT INTO destinations (
   symbol,
   type,
@@ -44,7 +44,7 @@ INSERT INTO destinations (
 VALUES ($1, $2, $3, $4, $5, $6);
 --
 
--- name: registerOrigin :one
+-- name: RegisterOrigin :exec
 INSERT INTO origins (
   symbol,
   type,
@@ -56,7 +56,7 @@ INSERT INTO origins (
 VALUES ($1, $2, $3, $4, $5, $6);
 --
 
--- name: registerCrew :one
+-- name: RegisterCrew :exec
 INSERT INTO crews (
   current,
   required,
@@ -69,7 +69,7 @@ INSERT INTO crews (
 VALUES ($1, $2, $3, $4, $5, $6, $7);
 --
 
--- name: registerFrame :one
+-- name: RegisterFrame :exec
 INSERT INTO frames (
   symbol,
   name,
@@ -80,13 +80,14 @@ INSERT INTO frames (
   mounting_points,
   fuel_capacity,
   quality,
+  requirement_id,
   ship_id
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 RETURNING id;
 --
 
--- name: registerReactor :one
+-- name: RegisterReactor :exec
 INSERT INTO reactors (
   symbol,
   name,
@@ -95,13 +96,14 @@ INSERT INTO reactors (
   description,
   power_output,
   quality,
+  requirement_id,
   ship_id
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING id;
 --
 
--- name: registerEngine :one
+-- name: RegisterEngine :exec
 INSERT INTO engines (
   symbol,
   name,
@@ -110,58 +112,58 @@ INSERT INTO engines (
   description,
   speed,
   quality,
+  requirement_id,
   ship_id
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+RETURNING id;
 --
 
--- name: registerModule :one
+-- name: RegisterModule :exec
 INSERT INTO modules (
   symbol,
   name,
   description,
   capacity,
   range,
+  requirement_id,
   ship_id
 )
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING id;
 --
 
--- name: registerMount :one
+-- name: RegisterMount :exec
 INSERT INTO mounts (
   symbol,
   name,
   description,
   strength,
   deposits,
+  requirement_id,
   ship_id
 )
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING id;
 --
 
--- name: registerRequirements :one
+-- name: RegisterRequirements :one
 INSERT INTO requirements (
   power,
   crew,
-  slots,
-  frame_id,
-  reactor_id,
-  engine_id,
-  module_id,
-  mount_id
+  slots
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+VALUES ($1, $2, $3)
+RETURNING id;
 --
 
--- name: registerCargo :one
+-- name: RegisterCargo :one
 INSERT INTO cargos (capacity, units, ship_id)
 VALUES ($1, $2, $3)
 RETURNING id;
 --
 
--- name: registerInventories :one
+-- name: RegisterInventories :exec
 INSERT INTO inventories (
   symbol,
   name,
@@ -172,18 +174,18 @@ INSERT INTO inventories (
 VALUES ($1, $2, $3, $4, $5);
 --
 
--- name: registerFuels :one
+-- name: RegisterFuels :one
 INSERT INTO fuels (current, capacity, ship_id)
 VALUES ($1, $2, $3)
 RETURNING id;
 --
 
--- name: registerConsumed :one
+-- name: RegisterConsumed :exec
 INSERT INTO consumed (amount, timestmp, fuel_id)
 VALUES ($1, $2, $3);
 --
 
--- name: registerCooldown :one
+-- name: RegisterCooldown :exec
 INSERT INTO cooldowns (
   ship_symbol,
   total_seconds,
@@ -191,5 +193,5 @@ INSERT INTO cooldowns (
   expiration,
   ship_id
 )
-VALUES ($1, $2, $3, $4, $5)
+VALUES ($1, $2, $3, $4, $5);
 --

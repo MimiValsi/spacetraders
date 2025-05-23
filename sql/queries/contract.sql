@@ -1,4 +1,4 @@
--- name: registerContract :one
+-- name: RegisterContract :one
 INSERT INTO contracts (
   id,
   faction_symbol,
@@ -12,18 +12,18 @@ VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING cid;
 --
 
--- name: registerTerms :one
+-- name: RegisterTerms :one
 INSERT INTO terms (deadline, contract_id)
 VALUES ($1, $2)
 RETURNING id;
 --
 
--- name: registerPayment :one
+-- name: RegisterPayment :exec
 INSERT INTO payments (on_accepted, on_fulfilled, term_id)
 VALUES ($1, $2, $3);
 --
 
--- name: registerDeliver :one
+-- name: RegisterDeliver :exec
 INSERT INTO delivers (
   trade_symbol,
   destination_symbol,
