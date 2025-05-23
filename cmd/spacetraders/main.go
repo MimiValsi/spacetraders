@@ -38,8 +38,8 @@ func main() {
 		log.Fatalln("new client error")
 	}
 
-	if err = client.Register("MIMI8", "AEGIS"); err != nil {
-		log.Fatalln(err)
-	}
+	//if err = client.Register("MIMI8", "AEGIS"); err != nil {
+	//	log.Fatalln(err)
+	//}
 
 }
