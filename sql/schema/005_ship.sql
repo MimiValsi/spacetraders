@@ -60,17 +60,25 @@ CREATE TABLE crews(
   ship_id INTEGER REFERENCES ships(id) ON DELETE CASCADE NOT NULL
 );
 
+CREATE TABLE requirements(
+  id SERIAL NOT NULL PRIMARY KEY,
+  power INTEGER NOT NULL,
+  crew INTEGER NOT NULL,
+  slots INTEGER NOT NULL
+);
+
 CREATE TABLE frames(
   id SERIAL NOT NULL PRIMARY KEY,
   symbol TEXT NOT NULL,
   name TEXT NOT NULL,
-  condition DOUBLE PRECISION NOT NULL,
-  integrity DOUBLE PRECISION NOT NULL,
+  condition REAL NOT NULL,
+  integrity REAL NOT NULL,
   description TEXT NOT NULL,
   module_slots INTEGER NOT NULL,
   mounting_points INTEGER NOT NULL,
   fuel_capacity INTEGER NOT NULL,
   quality INTEGER NOT NULL,
+  requirement_id INTEGER REFERENCES requirements(id) ON DELETE CASCADE NOT NULL,
   ship_id INTEGER REFERENCES ships(id) ON DELETE CASCADE NOT NULL
 );
 
@@ -83,6 +91,7 @@ CREATE TABLE reactors(
   description TEXT NOT NULL,
   power_output INTEGER NOT NULL,
   quality INTEGER NOT NULL,
+  requirement_id INTEGER REFERENCES requirements(id) ON DELETE CASCADE NOT NULL,
   ship_id INTEGER REFERENCES ships(id) ON DELETE CASCADE NOT NULL
 );
 
@@ -95,6 +104,7 @@ CREATE TABLE engines(
   description TEXT NOT NULL,
   speed INTEGER NOT NULL,
   quality INTEGER NOT NULL,
+  requirement_id INTEGER REFERENCES requirements(id) ON DELETE CASCADE NOT NULL,
   ship_id INTEGER REFERENCES ships(id) ON DELETE CASCADE NOT NULL
 );
 
@@ -103,8 +113,9 @@ CREATE TABLE modules(
   symbol TEXT NOT NULL,
   name TEXT NOT NULL,
   description TEXT NOT NULL,
-  capacity INTEGER NOT NULL,
-  range INTEGER NOT NULL,
+  capacity INTEGER NOT NULL DEFAULT 0,
+  range INTEGER NOT NULL DEFAULT 0,
+  requirement_id INTEGER REFERENCES requirements(id) ON DELETE CASCADE NOT NULL,
   ship_id INTEGER REFERENCES ships(id) ON DELETE CASCADE NOT NULL
 );
 
@@ -113,21 +124,10 @@ CREATE TABLE mounts(
   symbol TEXT NOT NULL,
   name TEXT NOT NULL,
   description TEXT NOT NULL,
-  strength INTEGER NOT NULL,
-  deposits TEXT[] NOT NULL,
+  strength INTEGER NOT NULL DEFAULT 0,
+  deposits TEXT[],
+  requirement_id INTEGER REFERENCES requirements(id) ON DELETE CASCADE NOT NULL,
   ship_id INTEGER REFERENCES ships(id) ON DELETE CASCADE NOT NULL
-);
-
-CREATE TABLE requirements(
-  id SERIAL NOT NULL PRIMARY KEY,
-  power INTEGER NOT NULL,
-  crew INTEGER NOT NULL,
-  slots INTEGER NOT NULL,
-  frame_id INTEGER REFERENCES frames(id) ON DELETE CASCADE NOT NULL,
-  reactor_id INTEGER REFERENCES reactors(id) ON DELETE CASCADE NOT NULL,
-  engine_id INTEGER REFERENCES engines(id) ON DELETE CASCADE NOT NULL,
-  module_id INTEGER REFERENCES modules(id) ON DELETE CASCADE NOT NULL,
-  mount_id INTEGER REFERENCES mounts(id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE cargos(
@@ -165,7 +165,7 @@ CREATE TABLE cooldowns(
   ship_symbol TEXT NOT NULL,
   total_seconds INTEGER NOT NULL,
   remaining_seconds INTEGER NOT NULL,
-  expiration TIMESTAMPTZ NOT NULL,
+  expiration TIMESTAMPTZ NOT NULL DEFAULT '-infinity',
   ship_id INTEGER REFERENCES ships(id) ON DELETE CASCADE NOT NULL
 );
 
@@ -180,7 +180,7 @@ DROP TABLE crews;
 DROP TABLE inventories;
 DROP TABLE consumed;
 DROP TABLE cooldowns;
-DROP TABLE requirements;
+DROP TABLE requirements CASCADE;
 DROP TABLE routes;
 DROP TABLE navs;
 DROP TABLE frames;
