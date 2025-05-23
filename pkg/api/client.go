@@ -5,16 +5,19 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/MimiValsi/spacetraders/internal/database"
 )
 
 type Client struct {
-	BaseURI *url.URL
-	Header *http.Header
-	httpClient *http.Client
-	//AccountToken string // this is meant to be used only once per week. Not even sure if needed...
+	BaseURI    *url.URL
+	Header     *http.Header
+	HttpClient *http.Client
+
+	DB *database.Queries
 }
 
-func NewClient(ctx context.Context, token string) (*Client, error) {
+func NewClient(ctx context.Context, token string, db *database.Queries) (*Client, error) {
 	uri, err := url.Parse("https://api.spacetraders.io/v2/")
 	if err != nil {
 		return nil, err
@@ -23,13 +26,12 @@ func NewClient(ctx context.Context, token string) (*Client, error) {
 	return &Client{
 		BaseURI: uri,
 		Header: &http.Header{
-			"Content-Type": {"application/json"},
+			"Content-Type":  {"application/json"},
 			"Authorization": {"Bearer " + token},
 		},
-		httpClient: &http.Client{
+		HttpClient: &http.Client{
 			Timeout: time.Minute,
 		},
+		DB: db,
 	}, nil
 }
-
-
