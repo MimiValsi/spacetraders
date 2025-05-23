@@ -37,11 +37,7 @@ func (c *Client) Register(symbol, faction string) error {
 		return err
 	}
 
-	//fmt.Printf("Register: %+v\n", agent)
-
 	return c.sendToDB(&agent)
-
-	//return nil
 }
 
 func (c *Client) sendToDB(agent *model.AgentRegister) error {
