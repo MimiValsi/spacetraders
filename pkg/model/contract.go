@@ -9,7 +9,7 @@ type ContractData struct {
 }
 
 type Contract struct {
-	Id               string    `json:"id"`
+	ID               string    `json:"id"`
 	FactionSymbol    string    `json:"factionSymbol"`
 	Type             string    `json:"type"`
 	Terms            *Terms    `json:"terms"`
