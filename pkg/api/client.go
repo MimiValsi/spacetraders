@@ -89,6 +89,8 @@ func (c *Client) Register(symbol, faction string) error {
 	}
 
 	req.Header = *c.Header
+	req.Header.Add("Authorization", "Bearer "+c.accountToken)
+
 	resp, err := c.HttpClient.Do(req)
 	if err != nil {
 		return err
@@ -150,6 +152,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 
 	var contractID int32
 	contractID, err = c.DB.RegisterContract(ctx, database.RegisterContractParams{
+		ID:               agent.Data.Contract.ID,
 		FactionSymbol:    agent.Data.Contract.FactionSymbol,
 		Type:             agent.Data.Contract.Type,
 		Accepted:         agent.Data.Contract.Accepted,
