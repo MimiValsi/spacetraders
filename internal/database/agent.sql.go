@@ -9,6 +9,24 @@ import (
 	"context"
 )
 
+const getAgent = `-- name: GetAgent :one
+
+SELECT token, credits, headquarters FROM agents
+`
+
+type GetAgentRow struct {
+	Token        string
+	Credits      int64
+	Headquarters string
+}
+
+func (q *Queries) GetAgent(ctx context.Context) (GetAgentRow, error) {
+	row := q.db.QueryRowContext(ctx, getAgent)
+	var i GetAgentRow
+	err := row.Scan(&i.Token, &i.Credits, &i.Headquarters)
+	return i, err
+}
+
 const getAgentToken = `-- name: GetAgentToken :one
 
 SELECT token FROM agents
