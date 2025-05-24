@@ -1,8 +1,9 @@
 package main
 
 import (
-	"context"
+	//"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
@@ -33,12 +34,18 @@ func main() {
 
 	queries := database.New(db)
 
-	client, err := api.NewClient(context.Background(), accountToken, queries)
+	agent, err := api.LoadAgent(queries)
 	if err != nil {
-		log.Fatalln("new client error")
+		log.Fatalln(err)
 	}
 
-	//if err = client.Register("MIMI8", "AEGIS"); err != nil {
+	fmt.Printf("agent: %+v\n", agent)
+	//client, err := api.NewClient(context.Background(), accountToken, queries)
+	//if err != nil {
+	//	log.Fatalln("new client error")
+	//}
+
+	//if err = client.Register("MIMI10", "COSMIC"); err != nil {
 	//	log.Fatalln(err)
 	//}
 
