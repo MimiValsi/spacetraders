@@ -15,3 +15,7 @@ RETURNING id;
 -- name: GetAgentToken :one
 SELECT token FROM agents;
 --
+
+-- name: GetAgent :one
+SELECT token, credits, headquarters FROM agents;
+--
