@@ -6,8 +6,8 @@ import (
 )
 
 type Agent struct {
-	Token   string
-	Credits int64
+	Token        string
+	Credits      int64
 	Headquarters string
 
 	DB *database.Queries
@@ -20,9 +20,9 @@ func LoadAgent(db *database.Queries) (*Agent, error) {
 	}
 
 	return &Agent{
-		Token: agent.Token,
-		Credits: agent.Credits,
+		Token:        agent.Token,
+		Credits:      agent.Credits,
 		Headquarters: agent.Headquarters,
-		DB: db,
+		DB:           db,
 	}, nil
 }
