@@ -44,13 +44,13 @@ func NewClient(ctx context.Context, accountToken string, db *database.Queries) (
 func (c *Client) GetAccount() error {
 	url := url.URL{Path: "my/account"}
 	uri := c.BaseURI.ResolveReference(&url)
+	ctx := context.Background()
 
 	req, err := http.NewRequest("GET", uri.String(), nil)
 	if err != nil {
 		return err
 	}
 
-	ctx := context.Background()
 	agentToken, err := c.DB.GetAgentToken(ctx)
 	if err != nil {
 		return err
@@ -96,9 +96,15 @@ func (c *Client) Register(symbol, faction string) error {
 		return err
 	}
 
-	defer resp.Body.Close()
+	//defer resp.Body.Close()
 
-	decoder := json.NewDecoder(resp.Body)
+	r, m, nok := CheckIsError(resp.Body)
+	if nok {
+		fmt.Printf("Message: %s\n", m)
+		return err
+	}
+
+	decoder := json.NewDecoder(r)
 	agent := model.AgentRegister{}
 	if err = decoder.Decode(&agent); err != nil {
 		return err
@@ -110,9 +116,7 @@ func (c *Client) Register(symbol, faction string) error {
 func (c *Client) sendToDB(agent *model.AgentRegister) error {
 	ctx := context.Background()
 
-	var agentID int32
-	var err error
-	agentID, err = c.DB.RegisterAgent(ctx, database.RegisterAgentParams{
+	agentID, err := c.DB.RegisterAgent(ctx, database.RegisterAgentParams{
 		AccountID:       agent.Data.Agent.AccountID,
 		Token:           agent.Data.Token,
 		Symbol:          agent.Data.Agent.Symbol,
@@ -125,8 +129,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 		return err
 	}
 
-	var factionID int32
-	factionID, err = c.DB.RegisterFaction(ctx, database.RegisterFactionParams{
+	factionID, err := c.DB.RegisterFaction(ctx, database.RegisterFactionParams{
 		Symbol:       agent.Data.Faction.Symbol,
 		Name:         agent.Data.Faction.Name,
 		Description:  agent.Data.Faction.Description,
@@ -150,8 +153,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 		}
 	}
 
-	var contractID int32
-	contractID, err = c.DB.RegisterContract(ctx, database.RegisterContractParams{
+	contractID, err := c.DB.RegisterContract(ctx, database.RegisterContractParams{
 		ID:               agent.Data.Contract.ID,
 		FactionSymbol:    agent.Data.Contract.FactionSymbol,
 		Type:             agent.Data.Contract.Type,
@@ -164,8 +166,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 		return err
 	}
 
-	var termsID int32
-	termsID, err = c.DB.RegisterTerms(ctx, database.RegisterTermsParams{
+	termsID, err := c.DB.RegisterTerms(ctx, database.RegisterTermsParams{
 		Deadline:   agent.Data.Contract.Terms.Deadline,
 		ContractID: contractID,
 	})
@@ -195,18 +196,8 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 		}
 	}
 
-	var shipID int32
-	var navID int32
-	var routeID int32
-	var frameReqID int32
-	var reactorReqID int32
-	var engineReqID int32
-	var moduleReqID int32
-	var mountReqID int32
-	var cargoID int32
-	var fuelID int32
 	for i := range agent.Data.Ships {
-		shipID, err = c.DB.RegisterShip(ctx, database.RegisterShipParams{
+		shipID, err := c.DB.RegisterShip(ctx, database.RegisterShipParams{
 			Symbol:  agent.Data.Ships[i].Symbol,
 			AgentID: agentID,
 		})
@@ -224,7 +215,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 			return err
 		}
 
-		navID, err = c.DB.RegisterNav(ctx, database.RegisterNavParams{
+		navID, err := c.DB.RegisterNav(ctx, database.RegisterNavParams{
 			SystemSymbol:   agent.Data.Ships[i].Nav.SystemSymbol,
 			WaypointSymbol: agent.Data.Ships[i].Nav.WaypointSymbol,
 			Status:         agent.Data.Ships[i].Nav.Status,
@@ -235,7 +226,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 			return err
 		}
 
-		routeID, err = c.DB.RegisterRoute(ctx, database.RegisterRouteParams{
+		routeID, err := c.DB.RegisterRoute(ctx, database.RegisterRouteParams{
 			DepartureTime: agent.Data.Ships[i].Nav.Route.DepartureTime,
 			Arrival:       agent.Data.Ships[i].Nav.Route.Arrival,
 			NavID:         navID,
@@ -281,7 +272,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 			return err
 		}
 
-		frameReqID, err = c.DB.RegisterRequirements(ctx, database.RegisterRequirementsParams{
+		frameReqID, err := c.DB.RegisterRequirements(ctx, database.RegisterRequirementsParams{
 			Power: agent.Data.Ships[i].Frame.Requirements.Power,
 			Crew:  agent.Data.Ships[i].Frame.Requirements.Crew,
 			Slots: agent.Data.Ships[i].Frame.Requirements.Slots,
@@ -307,7 +298,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 			return err
 		}
 
-		reactorReqID, err = c.DB.RegisterRequirements(ctx, database.RegisterRequirementsParams{
+		reactorReqID, err := c.DB.RegisterRequirements(ctx, database.RegisterRequirementsParams{
 			Power: agent.Data.Ships[i].Reactor.Requirements.Power,
 			Crew:  agent.Data.Ships[i].Reactor.Requirements.Crew,
 			Slots: agent.Data.Ships[i].Reactor.Requirements.Slots,
@@ -331,7 +322,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 			return err
 		}
 
-		engineReqID, err = c.DB.RegisterRequirements(ctx, database.RegisterRequirementsParams{
+		engineReqID, err := c.DB.RegisterRequirements(ctx, database.RegisterRequirementsParams{
 			Power: agent.Data.Ships[i].Engine.Requirements.Power,
 			Crew:  agent.Data.Ships[i].Engine.Requirements.Crew,
 			Slots: agent.Data.Ships[i].Engine.Requirements.Slots,
@@ -356,7 +347,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 		}
 
 		for j := range agent.Data.Ships[i].Modules {
-			moduleReqID, err = c.DB.RegisterRequirements(ctx, database.RegisterRequirementsParams{
+			moduleReqID, err := c.DB.RegisterRequirements(ctx, database.RegisterRequirementsParams{
 				Power: agent.Data.Ships[i].Modules[j].Requirements.Power,
 				Crew:  agent.Data.Ships[i].Modules[j].Requirements.Crew,
 				Slots: agent.Data.Ships[i].Modules[j].Requirements.Slots,
@@ -381,7 +372,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 		}
 
 		for j := range agent.Data.Ships[i].Mounts {
-			mountReqID, err = c.DB.RegisterRequirements(ctx, database.RegisterRequirementsParams{
+			mountReqID, err := c.DB.RegisterRequirements(ctx, database.RegisterRequirementsParams{
 				Power: agent.Data.Ships[i].Mounts[j].Requirements.Power,
 				Crew:  agent.Data.Ships[i].Mounts[j].Requirements.Crew,
 				Slots: agent.Data.Ships[i].Mounts[j].Requirements.Slots,
@@ -405,7 +396,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 
 		}
 
-		cargoID, err = c.DB.RegisterCargo(ctx, database.RegisterCargoParams{
+		cargoID, err := c.DB.RegisterCargo(ctx, database.RegisterCargoParams{
 			Capacity: agent.Data.Ships[i].Cargo.Capacity,
 			Units:    agent.Data.Ships[i].Cargo.Units,
 			ShipID:   shipID,
@@ -426,7 +417,7 @@ func (c *Client) sendToDB(agent *model.AgentRegister) error {
 			}
 		}
 
-		fuelID, err = c.DB.RegisterFuels(ctx, database.RegisterFuelsParams{
+		fuelID, err := c.DB.RegisterFuels(ctx, database.RegisterFuelsParams{
 			Current:  agent.Data.Ships[i].Fuel.Current,
 			Capacity: agent.Data.Ships[i].Fuel.Capacity,
 			ShipID:   shipID,
